@@ -1,0 +1,87 @@
+{
+  "name": "barbiex-md",
+  "version": "3.0.0",
+  "description": "Ultimate WhatsApp Bot for Girls with AI & Safety Features",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js --watch ./",
+    "test": "mocha tests/",
+    "lint": "eslint .",
+    "deploy": "git push heroku main",
+    "backup": "node utils/backup.js",
+    "translate": "node locales/translate.js",
+    "prettier": "prettier --write ."
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    // Core Libraries
+    "@whiskeysockets/baileys": "^6.4.0",
+    "axios": "^1.6.2",
+    "pino": "^8.16.0",
+    "chalk": "^5.3.0",
+    
+    // AI & NLP
+    "openai": "^4.28.0",
+    "natural": "^5.2.3",
+    "tensorflow-node": "^1.15.4",
+    
+    // Database
+    "mongoose": "^8.0.3",
+    "node-cache": "^5.1.2",
+    "quick.db": "^9.0.6",
+    
+    // Security
+    "bcryptjs": "^2.4.3",
+    "crypto-js": "^4.1.1",
+    "helmet": "^7.1.0",
+    
+    // Media Processing
+    "sharp": "^0.33.0",
+    "ffmpeg-static": "^5.2.0",
+    "webp-converter": "^2.3.3",
+    
+    // Utilities
+    "moment": "^2.29.4",
+    "node-cron": "^3.0.2",
+    "awesome-phonenumber": "^3.6.0",
+    "bad-words": "^3.0.4",
+    
+    // Women Health
+    "period-tracker": "^2.1.0",
+    "womens-health": "^1.4.2"
+  },
+  "devDependencies": {
+    // Development Tools
+    "nodemon": "^3.0.2",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.10",
+    
+    // Build Tools
+    "typescript": "^5.3.2",
+    "@types/node": "^20.10.5",
+    "webpack": "^5.89.0"
+  },
+  "keywords": [
+    "whatsapp-bot",
+    "girls-safety",
+    "ai-chatbot",
+    "women-health"
+  ],
+  "author": "YourName",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Arslan-MD/BarbieX-MD"
+  },
+  "bugs": {
+    "url": "https://github.com/Arslan-MD/BarbieX-MD/issues"
+  },
+  "homepage": "https://github.com/Arslan-MD/BarbieX-MD#readme"
+}
