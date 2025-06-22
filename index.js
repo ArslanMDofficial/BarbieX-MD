@@ -13,8 +13,18 @@ const SESSION_PATH = path.join(process.cwd(), `session_${config.SESSION_ID}`);
 if (!fs.existsSync(SESSION_PATH)) fs.mkdirSync(SESSION_PATH);
 
 // ======================
-// 🔄  AUTHENTICATION SYSTEM
+// 🔄 AUTHENTICATION SYSTEM
 // ======================
+
+// 🔥 Yeh NEW CODE paste karo (Line 10-13 ke aas paas)
+if (fs.existsSync('./creds.json')) {
+  fs.renameSync('./creds.json', `./session_${config.SESSION_ID}/creds.json`);
+  console.log("🔑 Creds file moved to session folder!");
+}
+
+async function initAuth() {
+  // ... baaki ka existing code
+}
 async function initAuth() {
   try {
     // If creds.json exists in root (uploaded by user)
