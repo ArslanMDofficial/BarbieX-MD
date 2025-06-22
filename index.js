@@ -1,39 +1,30 @@
-import { makeWASocket, useMultiFileAuthState, Browsers, delay } from '@whiskeysockets/baileys';
+import { makeWASocket, useMultiFileAuthState, Browsers, downloadContentFromMessage } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
 import fs from 'fs';
 import path from 'path';
 import config from './config.js';
-import axios from 'axios';
 import sharp from 'sharp';
+import 'dotenv/config';
 
 // ======================
 // 🛠️  INITIAL SETUP
 // ======================
 const SESSION_PATH = path.join(process.cwd(), `session_${config.SESSION_ID}`);
-if (!fs.existsSync(SESSION_PATH)) fs.mkdirSync(SESSION_PATH);
+if (!fs.existsSync(SESSION_PATH)) fs.mkdirSync(SESSION_PATH, { recursive: true });
 
 // ======================
-// 🔄 AUTHENTICATION SYSTEM
+// 🔄  AUTHENTICATION SYSTEM
 // ======================
 
-// 🔥 Yeh NEW CODE paste karo (Line 10-13 ke aas paas)
+// Handle creds.json upload
 if (fs.existsSync('./creds.json')) {
-  fs.renameSync('./creds.json', `./session_${config.SESSION_ID}/creds.json`);
-  console.log("🔑 Creds file moved to session folder!");
+  fs.copyFileSync('./creds.json', path.join(SESSION_PATH, 'creds.json'));
+  fs.unlinkSync('./creds.json');
+  console.log("🔑 Credentials moved to session folder");
 }
 
-async function initAuth() {
-  // ... baaki ka existing code
-}
 async function initAuth() {
   try {
-    // If creds.json exists in root (uploaded by user)
-    if (fs.existsSync('./creds.json')) {
-      fs.copyFileSync('./creds.json', path.join(SESSION_PATH, 'creds.json'));
-      fs.unlinkSync('./creds.json');
-      console.log("🔑 Using uploaded credentials");
-    }
-
     const { state, saveCreds } = await useMultiFileAuthState(SESSION_PATH);
     return { state, saveCreds };
   } catch (error) {
@@ -65,17 +56,15 @@ sock.ev.on('creds.update', saveCreds);
 sock.ev.on('connection.update', (update) => {
   const { connection, lastDisconnect, qr } = update;
   
-  // Show QR if new session
   if (qr && !fs.existsSync(path.join(SESSION_PATH, 'creds.json'))) {
     console.log("\n📳 Scan this QR:");
     qrcode.generate(qr, { small: true });
   }
 
-  // Auto-reconnect
   if (connection === 'close') {
     const shouldReconnect = (lastDisconnect.error?.output?.statusCode !== 401);
     console.log(shouldReconnect ? "🔁 Reconnecting..." : "❌ Permanent disconnect");
-    if (shouldReconnect) setTimeout(startBot, 5000);
+    if (shouldReconnect) setTimeout(() => startBot(), 5000);
   } else if (connection === 'open') {
     console.log(`✅ ${config.BOT_NAME} Online! (Session ID: ${config.SESSION_ID})`);
   }
@@ -97,12 +86,9 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
     // 🎯  CORE COMMANDS
     // ======================
     
-    // Ping Command
     if (text === `${config.PREFIX}ping`) {
       await sock.sendMessage(userJid, { text: `🏓 Pong! ${Date.now() - msg.messageTimestamp}ms` });
     }
-
-    // Menu (Buttons)
     else if (text === `${config.PREFIX}menu`) {
       await sock.sendMessage(userJid, {
         text: `*${config.BOT_NAME} Menu*\nSession ID: ${config.SESSION_ID}`,
@@ -113,10 +99,8 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
         footer: `Prefix: ${config.PREFIX}`
       });
     }
-
-    // Sticker Creator
     else if ((text.startsWith(`${config.PREFIX}sticker`)) && msg.message.imageMessage) {
-      const buffer = await downloadMediaMessage(msg, 'buffer', {});
+      const buffer = await downloadMedia(msg);
       const webp = await sharp(buffer).resize(512, 512).webp().toBuffer();
       await sock.sendMessage(userJid, { sticker: webp });
     }
@@ -124,17 +108,16 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
     // ======================
     // 🔒  OWNER COMMANDS
     // ======================
-    if (isOwner) {
-      // Broadcast (Owner Only)
-      if (text.startsWith(`${config.PREFIX}bc `)) {
-        const message = text.split(' ').slice(1).join(' ');
-        // Implement broadcast logic
-      }
+    if (isOwner && text.startsWith(`${config.PREFIX}bc `)) {
+      const message = text.split(' ').slice(1).join(' ');
+      // Broadcast logic here
     }
 
   } catch (error) {
     console.error('Command Error:', error);
-    await sock.sendMessage(userJid, { text: "❌ Error processing command!" });
+    await sock.sendMessage(userJid, { 
+      text: `❌ Error in command: ${error.message}` 
+    });
   }
 });
 
@@ -142,9 +125,28 @@ sock.ev.on('messages.upsert', async ({ messages }) => {
 // 🛠️  UTILITY FUNCTIONS
 // ======================
 
-// Auto-restart
+async function downloadMedia(msg) {
+  try {
+    const buffer = await downloadContentFromMessage(
+      msg.message.imageMessage || 
+      msg.message.videoMessage, 
+      'buffer'
+    );
+    let chunks = [];
+    for await (const chunk of buffer) chunks.push(chunk);
+    return Buffer.concat(chunks);
+  } catch (error) {
+    throw new Error(`Media download failed: ${error.message}`);
+  }
+}
+
+function startBot() {
+  console.log("🔄 Restarting bot...");
+  import('./index.js');
+}
+
 process.on('unhandledRejection', (err) => {
-  console.error('⚠️ Bot crashed, restarting...', err);
+  console.error('⚠️ Bot crashed:', err);
   startBot();
 });
 
