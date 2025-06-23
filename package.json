@@ -1,30 +1,20 @@
 {
   "name": "barbiex-md",
   "version": "2.0.0",
-  "description": "Advanced WhatsApp Bot with Arslan-MD",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "generate-session": "node session-generator.js",
-    "fix-deps": "npm install --legacy-peer-deps",
-    "fix-session": "rm -rf session_* creds.json"
+    "fix-deps": "npm install --force"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "6.2.8",
+    "@whiskeysockets/baileys": "6.4.0",
     "sharp": "0.30.7",
-    "axios": "^1.6.7",
     "qrcode-terminal": "^0.12.1",
-    "ffmpeg-static": "^5.1.0",
-    "dotenv": "^16.4.1",
-    "pino": "^8.17.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
+    "axios": "^1.6.7"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": "18.x"
   }
 }
