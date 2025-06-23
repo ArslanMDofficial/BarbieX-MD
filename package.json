@@ -9,12 +9,10 @@
     "dev": "nodemon index.js --watch ./",
     "generate-session": "node session-generator.js",
     "fix-deps": "npm install --legacy-peer-deps",
-    "fix-session": "rm -rf session_* creds.json",
-    "lint": "eslint .",
-    "prettier": "prettier --write ."
+    "fix-session": "rm -rf session_* creds.json"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:@itsukichan/baileys@6.4.0",
+    "@whiskeysockets/baileys": "6.4.0",
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",
     "ffmpeg-static": "^5.1.0",
@@ -27,28 +25,10 @@
     "crypto-js": "^4.1.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.5"
+    "nodemon": "^3.1.0"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
-  },
-  "keywords": [
-    "whatsapp-bot",
-    "baileys",
-    "multi-device",
-    "automation"
-  ],
-  "author": "Arslan-MD",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Arslan-MD/barbiex-md.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Arslan-MD/barbiex-md/issues"
-  },
-  "homepage": "https://github.com/Arslan-MD/barbiex-md#readme"
+  }
 }
